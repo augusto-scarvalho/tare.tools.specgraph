@@ -1,0 +1,86 @@
+{
+  "schema": "tare.tools/historical-regression-fixtures/1",
+  "authority": "NONE",
+  "files": {
+    "tests/fixtures/historical/distinct/federation.py.txt": {
+      "archive_path": "docs/evidence/2026-09-09-distinct-task-pilot/original-source/federation.py.txt",
+      "sha256": "c37fda2df3c1c8bc3dd97d0fdba0066f4a0dc80f11d4897d8e3d96ea3493527a",
+      "commit": "d9f65e069d3f597f0744f58462441d27ce1ab4ef"
+    },
+    "tests/fixtures/historical/distinct/lifecycle.py.txt": {
+      "archive_path": "docs/evidence/2026-09-09-distinct-task-pilot/original-source/lifecycle.py.txt",
+      "sha256": "4d9aad0908e4106e71fbae88f70382f884346ee4d0c211eeea42ba13017a3c14",
+      "commit": "d9f65e069d3f597f0744f58462441d27ce1ab4ef"
+    },
+    "tests/fixtures/historical/identity-loss/full.py": {
+      "archive_path": "docs/evidence/2026-09-08-new-task-pilot/r1-missing-symbol-with-spec-full/workspace/src/specgraph/hook_context.py",
+      "sha256": "066e9f91b7dc8a031ea93e828590b96a110fe06bdd5646fa9d886b51ecf19b9b",
+      "commit": "d9f65e069d3f597f0744f58462441d27ce1ab4ef"
+    },
+    "tests/fixtures/historical/identity-loss/focused.py": {
+      "archive_path": "docs/evidence/2026-09-08-new-task-pilot/r1-missing-symbol-with-spec-focused/workspace/src/specgraph/hook_context.py",
+      "sha256": "a24f0f168e48d018b623c22253177f434f224c72dac152e7227b84ae8343bbfb",
+      "commit": "d9f65e069d3f597f0744f58462441d27ce1ab4ef"
+    },
+    "tests/fixtures/historical/lexical-additional-cases.json": {
+      "archive_path": "docs/evidence/2026-09-08-lexical-intent/additional-cases.json",
+      "sha256": "ae31d305144c30d5682cfed78fb4e639f8c251abcca9f7d36862a41b360e7cd9",
+      "commit": "d9f65e069d3f597f0744f58462441d27ce1ab4ef"
+    },
+    "tests/fixtures/historical/economy/frozen/prepared/report-budget-types/task.json": {
+      "archive_path": "docs/evidence/2026-09-09-economy-pilot/frozen/prepared/report-budget-types/task.json",
+      "sha256": "933faaab48c05942e5dc9e351cb0507387916e18d7c6090a5af20097f91b23ff",
+      "commit": "d9f65e069d3f597f0744f58462441d27ce1ab4ef"
+    },
+    "tests/fixtures/historical/economy/frozen/prepared/report-budget-types/corpus/src/specgraph/report.py": {
+      "archive_path": "docs/evidence/2026-09-09-economy-pilot/frozen/prepared/report-budget-types/corpus/src/specgraph/report.py",
+      "sha256": "c57b2c64c1c6892e50908123526429c383db9478e93c294f9348712a57666fd2",
+      "commit": "d9f65e069d3f597f0744f58462441d27ce1ab4ef"
+    },
+    "tests/fixtures/historical/economy/frozen/prepared/test-path-exclusions/task.json": {
+      "archive_path": "docs/evidence/2026-09-09-economy-pilot/frozen/prepared/test-path-exclusions/task.json",
+      "sha256": "5be95241d0996ad8529ab461ae09c2c81e35149d742978bf861e3a4e08d4574a",
+      "commit": "d9f65e069d3f597f0744f58462441d27ce1ab4ef"
+    },
+    "tests/fixtures/historical/economy/frozen/prepared/test-path-exclusions/corpus/src/specgraph/test_parser.py": {
+      "archive_path": "docs/evidence/2026-09-09-economy-pilot/frozen/prepared/test-path-exclusions/corpus/src/specgraph/test_parser.py",
+      "sha256": "a191287245fc524f0a05bb682c8508f77bfbbffed5cce08b821f7ffc683a1777",
+      "commit": "d9f65e069d3f597f0744f58462441d27ce1ab4ef"
+    },
+    "tests/fixtures/historical/economy/frozen/prepared/yaml-root-types/task.json": {
+      "archive_path": "docs/evidence/2026-09-09-economy-pilot/frozen/prepared/yaml-root-types/task.json",
+      "sha256": "edac784f2cfa699e3747e3a5cf026979ccdd0dcc8e8a614576253b65f4f34f7e",
+      "commit": "d9f65e069d3f597f0744f58462441d27ce1ab4ef"
+    },
+    "tests/fixtures/historical/economy/frozen/prepared/yaml-root-types/corpus/src/specgraph/config.py": {
+      "archive_path": "docs/evidence/2026-09-09-economy-pilot/frozen/prepared/yaml-root-types/corpus/src/specgraph/config.py",
+      "sha256": "36f7450c37f0f27f8c6a06eaf8e04bf405789ea1f7b03bd5f2417abb534f1ba0",
+      "commit": "d9f65e069d3f597f0744f58462441d27ce1ab4ef"
+    },
+    "tests/fixtures/historical/economy/review/r1-test-path-exclusions-full-proposal.py": {
+      "archive_path": "docs/evidence/2026-09-09-economy-pilot/review/r1-test-path-exclusions-full-proposal.py",
+      "sha256": "e96b07bf8625542e3bd8a235997d4f71b6d0ed7fc2e2f0a28a73b57ef4a27373",
+      "commit": "d9f65e069d3f597f0744f58462441d27ce1ab4ef"
+    },
+    "tests/fixtures/historical/economy/review/r2-test-path-exclusions-full-proposal.py": {
+      "archive_path": "docs/evidence/2026-09-09-economy-pilot/review/r2-test-path-exclusions-full-proposal.py",
+      "sha256": "3d1d54d090b4ab9d83b19da864d6434fc659bba28e61dfc143b38beaee1d8363",
+      "commit": "d9f65e069d3f597f0744f58462441d27ce1ab4ef"
+    },
+    "tools/fixtures/x5/x5-mutations.json": {
+      "archive_path": "docs/evidence/x5-mutations.json",
+      "sha256": "5cbb28513274c19b0acc2bff65051cf1008093bd8382e8c15907b713a52ae85e",
+      "commit": "d9f65e069d3f597f0744f58462441d27ce1ab4ef"
+    },
+    "tools/fixtures/x5/x5-campaign-mutations.json": {
+      "archive_path": "docs/evidence/x5-campaign-mutations.json",
+      "sha256": "a76c92dad8a3f202cc5866b581cda464d77bb6d6c642bb3631732f75bf80b8c1",
+      "commit": "d9f65e069d3f597f0744f58462441d27ce1ab4ef"
+    },
+    "tools/fixtures/x5/x5-real-changes.json": {
+      "archive_path": "docs/evidence/x5-real-changes.json",
+      "sha256": "4956cd58de0b3058c090a8d4208c7e7fb17063e7e6ae4973a59d214e249b45de",
+      "commit": "d9f65e069d3f597f0744f58462441d27ce1ab4ef"
+    }
+  }
+}

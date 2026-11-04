@@ -1,0 +1,210 @@
+[
+ {
+  "name": "4e83663-test_selection-0",
+  "commit": "4e836635e7732f92de2428cdc0ba649e12522a8a",
+  "subject": "fix: recommend full-suite fallback without optional pytest",
+  "path": "src/specgraph/test_selection.py",
+  "find": "    try:\n        pytest_version = version('pytest')\n    except PackageNotFoundError:\n        pytest_version = None\n",
+  "replace": "    import pytest\n"
+ },
+ {
+  "name": "fb8a7c7-hook_context-3",
+  "commit": "fb8a7c78aa84d5f60875d5bdc82aa2a6a1a682a4",
+  "subject": "fix(context): select complete snippets within the packet budget",
+  "path": "src/specgraph/hook_context.py",
+  "find": "                            # Whole symbols compete for the remaining serialized packet budget.\n                            optional.append((\"snippets\", {\"id\": symbol[\"symbol_id\"], \"sha256\": row[1], \"text\": text, \"complete_symbol\": True}))\n",
+  "replace": "                            if len(text.encode()) <= 2048:\n                                optional.append((\"snippets\", {\"id\": symbol[\"symbol_id\"], \"sha256\": row[1], \"text\": text, \"complete_symbol\": True}))\n"
+ },
+ {
+  "name": "af336ce-config-5",
+  "commit": "af336ce10611b23ad3cc68f94e9a2eb317feedff",
+  "subject": "Reject falsy non-mapping configuration roots and honor test exclusion paths",
+  "path": "src/specgraph/config.py",
+  "find": "                data = yaml.safe_load(raw_text)\n                if data is None:\n                    data = {}\n",
+  "replace": "                data = yaml.safe_load(raw_text) or {}\n"
+ },
+ {
+  "name": "1795264-lifecycle-7",
+  "commit": "179526456e9119ac4abec495f45536835cb85a30",
+  "subject": "Fix final-lock lease expiry and reject partial acquired bodies",
+  "path": "src/specgraph/lifecycle.py",
+  "find": "        finished = time.time()\n        owned = (state.get(\"owner\") == owner and state[\"journal_id\"] == journal_id\n                 and state.get(\"lease_until\", 0.0) > finished)\n",
+  "replace": "        owned = state.get(\"owner\") == owner and state[\"journal_id\"] == journal_id\n"
+ },
+ {
+  "name": "6c973a0-hook_context-8",
+  "commit": "6c973a0e66687566a67217c9cdc2b13b2649595b",
+  "subject": "Fix hook path identity and explicit misses; retain rejected pilot evidence",
+  "path": "src/specgraph/hook_context.py",
+  "find": "                if not row:\n                    return bounded(mandatory | {\"status\": \"MISS\", \"reason\": \"explicit symbol is not indexed; bounded recovery allowed\"})\n                symbol = json.loads(row[0])\n                if selected_paths and symbol[\"file_path\"] not in selected_paths:\n                    return bounded(mandatory | {\"status\": \"OUTSIDE_SCOPE\", \"reason\": \"symbol does not belong to selected files\"})\n                symbols = [symbol]\n",
+  "replace": "                if row:\n                    symbol = json.loads(row[0])\n                    if selected_paths and symbol[\"file_path\"] not in selected_paths:\n                        return bounded(mandatory | {\"status\": \"OUTSIDE_SCOPE\", \"reason\": \"symbol does not belong to selected files\"})\n                    symbols = [symbol]\n                mandatory[\"symbol_id\"] = symbol_id\n"
+ },
+ {
+  "name": "4778ca3-tree_sitter-11",
+  "commit": "4778ca369756145b2ba7a459057074f858e28c18",
+  "subject": "feat: improve bounded retrieval, hook selection and cross-file aliases",
+  "path": "src/specgraph/extractors/tree_sitter.py",
+  "find": "               \"Only unshadowed same-file top-level functions and the declared cross-file subset are bound\"]\n_SHADOW_WHOLE = frozenset((\"formal_parameters\", \"parameters\", \"variable_declarator\", \"let_declaration\",\n                           \"use_declaration\", \"closure_parameters\", \"match_pattern\"))\n_SHADOW_FIELDS = {\"catch_clause\": \"parameter\", \"for_in_statement\": \"left\",\n                  \"for_expression\": \"pattern\", \"const_item\": \"name\", \"static_item\": \"name\", \"let_condition\": \"pattern\"}\n",
+  "replace": "               \"Only unshadowed same-file top-level function calls are bound\"]\n"
+ },
+ {
+  "name": "9255f32-storage-25",
+  "commit": "9255f32d9888cfa7a2075c5ecbc6394247445334",
+  "subject": "feat: retrieve code vocabulary and project bounded declared intent",
+  "path": "src/specgraph/storage.py",
+  "find": "                               (sid, indexed_text(name), indexed_text(path),\n                                indexed_text(symbol.get(\"docstring\") or \"\")))\n",
+  "replace": "                               (sid, name, path, symbol.get(\"docstring\") or \"\"))\n"
+ },
+ {
+  "name": "370727f-__init__-27",
+  "commit": "370727fc728bb2b51e5c2d52c5941a60df9a77d2",
+  "subject": "feat: implement and qualify bounded SpecGraph project intelligence",
+  "path": "src/specgraph/__init__.py",
+  "find": "\"\"\"SpecGraph public SDK; load analysis subsystems only when requested.\"\"\"\nfrom importlib import import_module\n",
+  "replace": "\"\"\"tare.tools.specgraph: Spec-Driven Development (SDD) & Causal Traceability Matrix Engine.\"\"\"\n"
+ },
+ {
+  "name": "13b1207-cli-55",
+  "commit": "13b12079de8617e15c28985b5531ef5f417f6926",
+  "subject": "fix: preserve bounded context fidelity and federated ownership",
+  "path": "src/specgraph/cli.py",
+  "find": "from .context import ContextPackager, encode_context_output\n",
+  "replace": "from .context import ContextPackager\n"
+ },
+ {
+  "name": "6dfad73-cli-57",
+  "commit": "6dfad736bd9a57cfe903ca35cab0bb550339d6ec",
+  "subject": "fix: serialize YAML dates in JSON traces",
+  "path": "src/specgraph/cli.py",
+  "find": "        print(json.dumps(data, ensure_ascii=False, indent=2, default=json_default))\n",
+  "replace": "        print(json.dumps(data, ensure_ascii=False, indent=2))\n"
+ },
+ {
+  "name": "84b14f5-ground-58",
+  "commit": "84b14f51704d663525a97cbc3aeb4da7e6d611d9",
+  "subject": "feat: accept exact-content Library projections",
+  "path": "src/specgraph/ground.py",
+  "find": "        selected = _select_entries(payload, repo, requested_ids, version)\n",
+  "replace": "        selected = _select_entries(payload, repo, requested_ids)\n"
+ },
+ {
+  "name": "e799569-cache-76",
+  "commit": "e79956934daa21ab81f1d65c1a9a62656c2aa8d7",
+  "subject": "fix(hardening): complete SQL leftover validation, unified path exclusions, imperative FastAPI routes, and .ddl indexing",
+  "path": "src/specgraph/cache.py",
+  "find": "        disc_errs: list[str],\n        excluded_paths: list[str] | None = None\n",
+  "replace": "        disc_errs: list[str]\n"
+ },
+ {
+  "name": "84e68a3-cache-81",
+  "commit": "84e68a3588efcd50f5cab245aa7bc31d10621b45",
+  "subject": "fix(hardening): fail-closed SQL syntax parsing, strict drift validation in sync_cache, multiline YAML list tag extraction, and full test coverage",
+  "path": "src/specgraph/cache.py",
+  "find": "        # Refuse to sync cache if drift_check() fails for ANY reason (referential, parsing, duplicates, or inactive ADR governance)\n        drift = matrix.drift_check(strict_override=False)\n        if drift[\"status\"] != \"PASS\":\n            raise ValueError(f\"Cannot sync cache with drift violations: {drift['violations']}\")\n",
+  "replace": "        # Refuse to sync cache if there are critical referential, syntax/parse, or duplicate violations\n        critical_violations = list(matrix.parse_errors + matrix.dangling_spec_refs + matrix.invalid_criteria_refs + matrix.duplicate_warnings)\n        if critical_violations:\n            raise ValueError(f\"Cannot sync cache with referential, parsing, or duplicate violations: {critical_violations}\")\n"
+ },
+ {
+  "name": "7a74fff-graph-85",
+  "commit": "7a74fffda758a4eaffd8ffeabd872d84ce1f69b3",
+  "subject": "fix(hardening): comprehensive canonical digest of all governed files, strict criterion edge validation, AST-scoped static dependency analysis, and recursive allowed_exts filtering",
+  "path": "src/specgraph/graph.py",
+  "find": "        \"\"\"Compute the complete content-addressed SHA-256 digest of all governed files and graph structure.\"\"\"\n        from .cache import IncrementalCacheEngine\n        discovered, _ = IncrementalCacheEngine._discover_all_project_files(self.config, self.root_dir)\n\n",
+  "replace": "        \"\"\"Compute the complete content-addressed SHA-256 digest of the entire causal graph and implementation contents.\"\"\"\n"
+ },
+ {
+  "name": "ac5ea96-cache-89",
+  "commit": "ac5ea9616a7a9df49378fc6884110d6792400e73",
+  "subject": "fix(hardening): strict manifest deserialization, comprehensive tag extraction for added files, spec status enum validation, and path escape detection",
+  "path": "src/specgraph/cache.py",
+  "find": "        raw_json = json.dumps(data, indent=2, ensure_ascii=False)\n",
+  "replace": "        nonce = uuid.uuid4().hex\n        tmp_path = cache_path.parent / f\".tmp_cache_{nonce}_{os.getpid()}.json\"\n"
+ },
+ {
+  "name": "09eeaa7-schema_parser-91",
+  "commit": "09eeaa7e746fe4458f9478dbcc66dff4eeae069b",
+  "subject": "fix(hardening): resolve static import dependencies, track router prefixes, enforce drift validation in sync_cache and crypto verification default",
+  "path": "src/specgraph/schema_parser.py",
+  "find": "        r\"CREATE\\s+TABLE\\s+(?:IF\\s+NOT\\s+EXISTS\\s+)?([A-Za-z0-9_\\\"\\`\\.\\[\\]]+)\\s*\\((.*?)\\)\\s*;\",\n",
+  "replace": "        r\"CREATE\\s+TABLE\\s+(?:IF\\s+NOT\\s+EXISTS\\s+)?([A-Za-z0-9_\\\"\\`\\.\\[\\]]+)\\s*\\((.*?)\\);\",\n"
+ },
+ {
+  "name": "708840c-api_parser-93",
+  "commit": "708840ca21c7e879a5f9237eeb65aec5555f53d7",
+  "subject": "fix(hardening): union causal invalidation on binding mutations, JSON spec keyword extraction, ADR cycle detection, robust fail-closed I/O and FastAPI api_route support",
+  "path": "src/specgraph/api_parser.py",
+  "find": "    HTTP_METHODS = {\"get\", \"post\", \"put\", \"delete\", \"patch\", \"options\", \"head\", \"route\", \"api_route\"}\n",
+  "replace": "    HTTP_METHODS = {\"get\", \"post\", \"put\", \"delete\", \"patch\", \"options\", \"head\", \"route\"}\n"
+ },
+ {
+  "name": "fdc8e38-adr_parser-97",
+  "commit": "fdc8e381a52a185ff10954c1300e7a78f96a8305",
+  "subject": "fix(hardening): enforce excluded paths in spec discovery, validate ADR enum, parenthesis aware SQL column splitting and root-relative digest calculation",
+  "path": "src/specgraph/adr_parser.py",
+  "find": "        ALLOWED_STATUSES = {\"PROPOSED\", \"ACCEPTED\", \"APPROVED\", \"REJECTED\", \"SUPERSEDED\", \"DEPRECATED\", \"WITHDRAWN\"}\n        status = str(fm_data.get(\"status\") or \"\").upper().strip()\n",
+  "replace": "        status = str(fm_data.get(\"status\") or \"\").upper()\n"
+ },
+ {
+  "name": "1a38d63-adr_parser-103",
+  "commit": "1a38d63f5fd74784871f9a9c204704e42cdf0a17",
+  "subject": "fix(hardening): add orphan contracts drift detection, Windows retry backoff on replace, full file hash canonical digest and strict config validation",
+  "path": "src/specgraph/adr_parser.py",
+  "find": "            if target.is_file():\n                files = [target] if target.suffix.lower() in (\".md\", \".markdown\") else []\n            else:\n                files = sorted([f for f in target.rglob(\"*\") if f.is_file() and f.suffix.lower() in (\".md\", \".markdown\")])\n",
+  "replace": "            if not target.exists():\n                continue\n"
+ },
+ {
+  "name": "0207e44-cache-107",
+  "commit": "0207e44adde947f6533483d8127eae6c8d7ef419",
+  "subject": "fix(hardening): comprehensive adversarial security fixes, fast tree scan, transitive blast radius, strict link grammar, fail-closed json and full content digest",
+  "path": "src/specgraph/cache.py",
+  "find": "                generation_digest=\"\",\n                discovery_errors=disc_errs\n",
+  "replace": "                generation_digest=\"\"\n"
+ },
+ {
+  "name": "cb20468-cli-118",
+  "commit": "cb20468bfe27a1473317585c864a76af964d3e17",
+  "subject": "feat(indexing): add SQL DDL, JSON Schema, Pydantic, FastAPI routes, MCP Tools and ADR indexing",
+  "path": "src/specgraph/cli.py",
+  "find": "def dump_trace(matrix: CausalTraceabilityMatrix, fmt: str, kind: str = \"all\") -> None:\n",
+  "replace": "def dump_trace(matrix: CausalTraceabilityMatrix, fmt: str) -> None:\n"
+ },
+ {
+  "name": "5bcb82b-code_parser-123",
+  "commit": "5bcb82b056a7dc1812cc0935a929afa9e9811239",
+  "subject": "fix(hardening): strict ID grammar check and import re in graph.py",
+  "path": "src/specgraph/code_parser.py",
+  "find": "            raw_spec = match.group(1).strip().upper()\n",
+  "replace": "            spec_id = match.group(1).upper()\n"
+ },
+ {
+  "name": "600da7a-test_parser-138",
+  "commit": "600da7aa64dc9bd11b881cd5dd4271741cd163b3",
+  "subject": "fix(hardening): strict UTF-8 decoding in spec, code, and test parsers fail-closed on UnicodeDecodeError",
+  "path": "src/specgraph/test_parser.py",
+  "find": "            code = p.read_text(encoding=\"utf-8\", errors=\"strict\")\n",
+  "replace": "            code = p.read_text(encoding=\"utf-8\", errors=\"replace\")\n"
+ },
+ {
+  "name": "c4510fd-graph-141",
+  "commit": "c4510fd9a9e5d31fc0cf09df5bf27528848b88d8",
+  "subject": "fix(hardening): enforce causal referential integrity for dangling specs and criteria, safe spec I/O",
+  "path": "src/specgraph/graph.py",
+  "find": "        matrix._assemble_and_validate_edges()\n",
+  "replace": "        matrix._assemble_edges()\n"
+ },
+ {
+  "name": "9909e2a-cli-145",
+  "commit": "9909e2a7380fab738f802f3ad6ad2bbb0e40a7d2",
+  "subject": "fix(hardening): resolve adversarial audit findings - fail-closed parse errors, anti-traversal checks, duplicate detection and BooleanOptionalAction CLI",
+  "path": "src/specgraph/cli.py",
+  "find": "    doc_p = sp.add_parser(\"doctor\", help=\"Comprehensive health and coverage diagnostic of the project's SDD pipeline\")\n    doc_p.add_argument(\"--format\", choices=[\"json\", \"yaml\", \"md\", \"table\"], help=\"Output format\")\n",
+  "replace": "    sp.add_parser(\"doctor\", help=\"Comprehensive health and coverage diagnostic of the project's SDD pipeline\")\n"
+ },
+ {
+  "name": "1350935-api_parser-66",
+  "commit": "135093556d8049ea2108396c2fbd90956d3ae7d1",
+  "subject": "fix(hardening): fail-closed mutex lock, exact relative path exclusions, AST import blast radius seeding, include_router prepass, and O(1) memory hashing",
+  "path": "src/specgraph/api_parser.py",
+  "find": "            visitor = ASTApiVisitor(rel_path, tree=tree)\n",
+  "replace": "            visitor = ASTApiVisitor(rel_path)\n"
+ }
+]

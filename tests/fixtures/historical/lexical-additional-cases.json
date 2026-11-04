@@ -1,0 +1,67 @@
+{
+  "schema": "tare.tools/lexical-intent-cases/1",
+  "frozen_before_product_implementation": true,
+  "limitations": "Author-selected synthetic cases; vocabulary overlap PT/EN, not blind evaluation or translation capability. Intent case adds SPEC/ADR in runner.",
+  "cases": [
+    {
+      "id": "english",
+      "source": "def acquire():\n    \"\"\"Renew expired session credentials without replacing user preferences.\"\"\"\n    return True\n",
+      "query": "Which function renews expired session credentials?",
+      "expected": "acquire"
+    },
+    {
+      "id": "portuguese",
+      "source": "def recuperar():\n    \"\"\"Restaura cópias de segurança e valida a integridade dos arquivos.\"\"\"\n    return True\n",
+      "query": "Onde restaura copias de seguranca dos arquivos?",
+      "expected": "recuperar"
+    },
+    {
+      "id": "camel",
+      "source": "def flushPendingInvoices():\n    return True\n",
+      "query": "flush pending invoices",
+      "expected": "flushPendingInvoices"
+    },
+    {
+      "id": "snake",
+      "source": "def rotate_service_credentials():\n    return True\n",
+      "query": "rotate service credentials",
+      "expected": "rotate_service_credentials"
+    },
+    {
+      "id": "scope",
+      "source": "class DeliveryQueue:\n    def drain(self):\n        return True\n",
+      "query": "delivery queue drain",
+      "expected": "DeliveryQueue.drain"
+    },
+    {
+      "id": "partial",
+      "source": "def renew():\n    \"\"\"Renew expired session credentials.\"\"\"\n    return True\n",
+      "query": "Where are expired credentials renewed safely?",
+      "expected": "renew"
+    },
+    {
+      "id": "negative",
+      "source": "def missing():\n    \"\"\"Generic helper for credentials and invoices.\"\"\"\n    return True\n",
+      "query": "quasar_unicorn_missing_7f28c1",
+      "expected": null
+    },
+    {
+      "id": "no_translation",
+      "source": "def check():\n    \"\"\"Validate invoice checksum.\"\"\"\n    return True\n",
+      "query": "verificar fatura assinatura",
+      "expected": null
+    },
+    {
+      "id": "intent",
+      "source": "def leaf():\n    return 41\n",
+      "query": "idempotent billing retries",
+      "expected": "leaf"
+    },
+    {
+      "id": "negative_prose",
+      "source": "def leaf():\n    \"\"\"Invoice checksum.\"\"\"\n    return 41\n",
+      "query": "volcanic penguins orbit quasars",
+      "expected": null
+    }
+  ]
+}

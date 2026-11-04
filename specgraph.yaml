@@ -1,0 +1,19 @@
+project_name: tare.tools.specgraph
+spec_paths:
+  - docs/specs
+  - docs/SPEC-SPECGRAPH-001.md
+adr_paths:
+  - docs/adr
+  - docs/ADR-001_SPECGRAPH_NORTH_STAR.md
+indexed_paths: [src]
+governed_paths: [src]
+python_source_roots: [src]
+test_paths: [tests]
+intent_mapping_paths: [planning/traceability-mappings.json]
+excluded_paths: [.git, .venv, __pycache__, .pytest_cache, .specgraph, build, dist]
+hook_context:
+  enabled: true
+  automatic_roles: []
+  role: implementer
+  max_bytes: 4096
+  timeout_ms: 50

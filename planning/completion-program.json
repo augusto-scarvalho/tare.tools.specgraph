@@ -1,0 +1,549 @@
+{
+  "schema": "tare.tools/specgraph-completion-program/1",
+  "program_id": "SPECGRAPH-COMPLETION-20260908",
+  "version": 1,
+  "date": "2026-09-08",
+  "canonical_work_graph": "tare.tools.os:work-graph.json",
+  "authorization": {
+    "kind": "operator_instruction",
+    "statement": "The operator asked to implement the plan and to record its graph, specifications and ADRs in the backlog-graph schema.",
+    "scope": "Materialize the contracts and the program; implement the consolidated plan; research only through experiments.",
+    "does_not_attest_completion": true,
+    "does_not_claim_tripartite_vote": true
+  },
+  "packages": [
+    {
+      "id": "C0",
+      "work_id": "SPECGRAPH-COMPLETION-C0",
+      "title": "Honest capabilities and a reproducible benchmark",
+      "owner": [
+        "tare.tools.specgraph"
+      ],
+      "depends_on": [],
+      "spec_ref": "tare.tools.specgraph:docs/specs/SPEC-SPECGRAPH-C0.md",
+      "adr_refs": [
+        "tare.tools.specgraph:docs/adr/ADR-SPECGRAPH-005.md"
+      ],
+      "acceptance_criteria": {
+        "AC-01": "Every advertised capability identifies its implementation, contract, verification method and limits; planning is not proof.",
+        "AC-02": "The three Python counterexamples are reproducible without external services and recorded before/after the fix.",
+        "AC-03": "The benchmark records version, root, corpus, environment, complete process, p50/p95/p99 and sample count without promoting a target to a measurement.",
+        "AC-04": "The configuration reveals the covered spec/code paths; absence of a SPEC is declared, not confused with absence of code."
+      },
+      "target_paths": {
+        "tare.tools.specgraph": [
+          "README.md",
+          "README.pt-BR.md",
+          "docs/INDEX.md",
+          "src/specgraph/capabilities.py",
+          "tools/bench_queries.py",
+          "planning/completion-program.json"
+        ]
+      },
+      "kind": "core",
+      "status": "planned",
+      "implementation": "Versioned catalog served by capabilities and doctor; replace absolute claims and wrong links. Small local benchmark; heavy profiles use the workstation. Existing tests and counterexamples are distinct evidence.",
+      "qualification_command": "python -m pytest tests/test_capabilities.py tests/test_python_resolution.py -q",
+      "qualification_status": "NOT_RUN_FOR_THIS_CONTRACT"
+    },
+    {
+      "id": "C1",
+      "work_id": "SPECGRAPH-COMPLETION-C1",
+      "title": "Python identity and structural resolution",
+      "owner": [
+        "tare.tools.specgraph"
+      ],
+      "depends_on": [
+        "C0"
+      ],
+      "spec_ref": "tare.tools.specgraph:docs/specs/SPEC-SPECGRAPH-C1.md",
+      "adr_refs": [
+        "tare.tools.specgraph:docs/adr/ADR-SPECGRAPH-002.md"
+      ],
+      "acceptance_criteria": {
+        "AC-01": "IDs preserve repo/path/lexical scope; homonyms and nested scopes do not merge.",
+        "AC-02": "Absolute and relative imports and aliases resolve through the complete module/source root; ambiguity never picks the first basename.",
+        "AC-03": "Supported local calls produce the correct dependency; an unused import does not become a function dependency.",
+        "AC-04": "Each occurrence/relation declares its origin, range and resolution state; external/dynamic/unknown does not get a fictitious endpoint.",
+        "AC-05": "Correct legacy APIs/IDs remain compatible; indexed code outside governed_paths does not become a blocking orphan."
+      },
+      "target_paths": {
+        "tare.tools.specgraph": [
+          "src/specgraph/code_parser.py",
+          "src/specgraph/graph.py",
+          "src/specgraph/config.py",
+          "src/specgraph/resolver.py",
+          "tests/test_python_resolution.py"
+        ]
+      },
+      "kind": "core",
+      "status": "planned",
+      "implementation": "Extract references with the native AST, resolve them within the module index, and separate syntactic certainty from a resolved target. DEPENDS_ON_STATIC stays a compatible projection; dynamic coverage is not promised.",
+      "qualification_command": "python -m pytest tests/test_python_resolution.py tests/test_specgraph_core.py -q",
+      "qualification_status": "NOT_RUN_FOR_THIS_CONTRACT"
+    },
+    {
+      "id": "C2",
+      "work_id": "SPECGRAPH-COMPLETION-C2",
+      "title": "SQLite read model, snapshots and minimal MCP",
+      "owner": [
+        "tare.tools.specgraph"
+      ],
+      "depends_on": [
+        "C1"
+      ],
+      "spec_ref": "tare.tools.specgraph:docs/specs/SPEC-SPECGRAPH-C2.md",
+      "adr_refs": [
+        "tare.tools.specgraph:docs/adr/ADR-SPECGRAPH-002.md"
+      ],
+      "acceptance_criteria": {
+        "AC-01": "The index materializes symbols, relations, documents and metadata in SQLite WAL; a query does not run AST parsing, a full scan or a structural subprocess.",
+        "AC-02": "BEGIN IMMEDIATE publication is atomic, content is deterministic and revision_seq is monotonic; an idempotent operation does not pollute generations and K=1 retention remains.",
+        "AC-03": "The reader uses a consistent snapshot; a wrong root, corruption or an incompatible schema is refused without replacing sources.",
+        "AC-04": "Coverage, snapshot/freshness and governance are separate states; governance debt does not prevent a faithful representation and parse errors are explicit.",
+        "AC-05": "The read-only MCP query_causal_graph/get_context_envelope/check_drift uses the same services and includes revision_seq/content_hash; no mutator is exposed."
+      },
+      "target_paths": {
+        "tare.tools.specgraph": [
+          "src/specgraph/storage.py",
+          "src/specgraph/indexer.py",
+          "src/specgraph/mcp_server.py",
+          "src/specgraph/cli.py",
+          "tests/test_persistent_index.py",
+          "tests/test_mcp_server.py"
+        ]
+      },
+      "kind": "core",
+      "status": "planned",
+      "implementation": "stdlib sqlite3 and FTS5 when available, a capability diagnostic when absent. Native state per root with an explicit override; keep hashes before/after the build to detect concurrent writes. The strict JSON cache keeps its contract during migration.",
+      "qualification_command": "python -m pytest tests/test_persistent_index.py tests/test_mcp_server.py -q",
+      "qualification_status": "NOT_RUN_FOR_THIS_CONTRACT"
+    },
+    {
+      "id": "C3",
+      "work_id": "SPECGRAPH-COMPLETION-C3",
+      "title": "Incremental extraction and verifiable freshness",
+      "owner": [
+        "tare.tools.specgraph"
+      ],
+      "depends_on": [
+        "C2"
+      ],
+      "spec_ref": "tare.tools.specgraph:docs/specs/SPEC-SPECGRAPH-C3.md",
+      "adr_refs": [
+        "tare.tools.specgraph:docs/adr/ADR-SPECGRAPH-002.md"
+      ],
+      "acceptance_criteria": {
+        "AC-01": "After an edit/delete/rename/config/parser change, the incremental graph is equivalent to a full rebuild on the qualification corpus.",
+        "AC-02": "The delta re-extracts changed files and relinks affected consumers; it removes leftover symbols/edges/FTS rows atomically.",
+        "AC-03": "Watchers/events are accelerators with reconciliation of lost events; the freshness method, age and coverage are explicit.",
+        "AC-04": "Strict impact keeps AC-02 fail-closed for stale data; an advisory query never satisfies a gate.",
+        "AC-05": "Unstable sources/parse errors are not published as complete or fresh; the read model can represent debt without hiding it."
+      },
+      "target_paths": {
+        "tare.tools.specgraph": [
+          "src/specgraph/indexer.py",
+          "src/specgraph/cache.py",
+          "src/specgraph/staleness.py",
+          "src/specgraph/impact.py",
+          "tests/test_incremental_index.py"
+        ]
+      },
+      "kind": "core",
+      "status": "planned",
+      "implementation": "Cache per extractor/file with fingerprints and resolution dependencies; reparse limited to the delta and transitive rebind according to exports. Do not replace strong verification with mtime without declaring the limit.",
+      "qualification_command": "python -m pytest tests/test_incremental_index.py tests/test_cache_and_staleness.py -q",
+      "qualification_status": "NOT_RUN_FOR_THIS_CONTRACT"
+    },
+    {
+      "id": "C4",
+      "work_id": "SPECGRAPH-COMPLETION-C4",
+      "title": "Budgeted code search and context",
+      "owner": [
+        "tare.tools.specgraph"
+      ],
+      "depends_on": [
+        "C3"
+      ],
+      "spec_ref": "tare.tools.specgraph:docs/specs/SPEC-SPECGRAPH-C4.md",
+      "adr_refs": [
+        "tare.tools.specgraph:docs/adr/ADR-SPECGRAPH-003.md"
+      ],
+      "acceptance_criteria": {
+        "AC-01": "Exact ID/path/name and text retrieve results with ranges, reasons and the source snapshot; lexical/graph retrieval works without a SPEC or an LLM.",
+        "AC-02": "refs/neighbors/path/explain respect direction, types, ambiguities, hop/node/byte limits and deterministic ordering.",
+        "AC-03": "Context selects complete units; mandatory ACs/snippets are never truncated; an excess is refused with a smaller suggested selection.",
+        "AC-04": "Learned reuse preserves the literal/structural origin and does not hide a better result from the current generation.",
+        "AC-05": "P95 includes the complete cost per profile; the sub-50ms service and <=300ms CLI targets remain qualification proposals, not a universal guarantee."
+      },
+      "target_paths": {
+        "tare.tools.specgraph": [
+          "src/specgraph/query.py",
+          "src/specgraph/search.py",
+          "src/specgraph/resolve.py",
+          "src/specgraph/context.py",
+          "src/specgraph/cli.py",
+          "tests/test_project_queries.py"
+        ]
+      },
+      "kind": "core",
+      "status": "planned",
+      "implementation": "Deterministic router exact→lexical→bounded expansion. FTS5 BM25, no required vectors. Handles with repo/snapshot/budget, the existing strict renderer and compact JSON. Return UNKNOWN/PARTIAL when coverage does not allow an absence.",
+      "qualification_command": "python -m pytest tests/test_project_queries.py tests/test_resolve.py tests/test_bundle_fidelity.py -q",
+      "qualification_status": "NOT_RUN_FOR_THIS_CONTRACT"
+    },
+    {
+      "id": "C5",
+      "work_id": "SPECGRAPH-COMPLETION-C5",
+      "title": "Federated intent and evidence with validity",
+      "owner": [
+        "tare.tools.specgraph",
+        "tare.tools.library",
+        "tare.tools.backlog-graph"
+      ],
+      "depends_on": [
+        "C4"
+      ],
+      "spec_ref": "tare.tools.specgraph:docs/specs/SPEC-SPECGRAPH-C5.md",
+      "adr_refs": [
+        "tare.tools.specgraph:docs/adr/ADR-SPECGRAPH-004.md"
+      ],
+      "acceptance_criteria": {
+        "AC-01": "Declarative mapping and assisted rebind preserve the source-qualified SPEC/ADR; conflicts and candidates are not silently promoted.",
+        "AC-02": "A bundle by diff/ref uses a stable snapshot and the owners' explicit sources; READY metadata does not imply that the body was read.",
+        "AC-03": "A test reference, a verifies declaration and executed coverage are distinct relations; an isolated JUnit/hash does not become Tier 1.",
+        "AC-04": "Evidence records the command/executor/configuration/environment/snapshot and the attestation; relevant changes require conservative revalidation.",
+        "AC-05": "Work/status belong to the Backlog; a source/AC mismatch at admission is refused; the Library catalog only receives pins/hashes of real commits."
+      },
+      "target_paths": {
+        "tare.tools.specgraph": [
+          "src/specgraph/config.py",
+          "src/specgraph/ground.py",
+          "src/specgraph/context.py",
+          "src/specgraph/evidence.py",
+          "tests/test_evidence_lineage.py"
+        ],
+        "tare.tools.library": [
+          "catalog"
+        ],
+        "tare.tools.backlog-graph": [
+          "src/graph_backlog"
+        ]
+      },
+      "kind": "core",
+      "status": "planned",
+      "implementation": "Ingest evidence references produced by the executor; do not build a parallel signer. The valid/needs_revalidation/superseded/invalid states preserve history. Without complete observed dependencies, declare the limits and use a conservative fallback.",
+      "qualification_command": "python -m pytest tests/test_evidence_lineage.py tests/test_ground.py -q",
+      "qualification_status": "NOT_RUN_FOR_THIS_CONTRACT"
+    },
+    {
+      "id": "C6",
+      "work_id": "SPECGRAPH-COMPLETION-C6",
+      "title": "TypeScript, Rust and an offline viewer",
+      "owner": [
+        "tare.tools.specgraph"
+      ],
+      "depends_on": [
+        "C5"
+      ],
+      "spec_ref": "tare.tools.specgraph:docs/specs/SPEC-SPECGRAPH-C6.md",
+      "adr_refs": [
+        "tare.tools.specgraph:docs/adr/ADR-SPECGRAPH-003.md"
+      ],
+      "acceptance_criteria": {
+        "AC-01": "TypeScript and Rust have Tree-sitter extractors and a contract per construct/language; the grammar is not presented as full semantic resolution.",
+        "AC-02": "A supported installation does not require a C/Rust compiler; missing extras are diagnosed, with no silent fallback that invents coverage.",
+        "AC-03": "A single offline HTML file without a CDN provides the map, filters, path/impact and sources, with a budget and safe escaping.",
+        "AC-04": "CLI/MCP/SDK/UI represent the same generation and limits; code without a SPEC remains navigable.",
+        "AC-05": "SCIP is an optional adapter with an explicit subset/version; no mandatory semantic enrichment enters the hot path."
+      },
+      "target_paths": {
+        "tare.tools.specgraph": [
+          "src/specgraph/extractors",
+          "src/specgraph/report.py",
+          "src/specgraph/scip_adapter.py",
+          "pyproject.toml",
+          "tests/test_multilanguage.py",
+          "tests/test_offline_report.py"
+        ]
+      },
+      "kind": "core",
+      "status": "planned",
+      "implementation": "Grammars through wheels and pure extractors; incremental read-only UI by selection, bounded datasets, clickable origin. Completes the ratified phase; not optional for declaring the complete vision.",
+      "qualification_command": "python -m pytest tests/test_multilanguage.py tests/test_offline_report.py -q",
+      "qualification_status": "NOT_RUN_FOR_THIS_CONTRACT"
+    },
+    {
+      "id": "C7",
+      "work_id": "SPECGRAPH-COMPLETION-C7",
+      "title": "Context services for hooks and doctor",
+      "owner": [
+        "tare.tools.specgraph",
+        "tare.tools.os",
+        "tare.tools.kernel"
+      ],
+      "depends_on": [
+        "C5"
+      ],
+      "spec_ref": "tare.tools.specgraph:docs/specs/SPEC-SPECGRAPH-C7.md",
+      "adr_refs": [
+        "tare.tools.specgraph:docs/adr/ADR-SPECGRAPH-003.md"
+      ],
+      "acceptance_criteria": {
+        "AC-01": "Read-only services expose root/capability/coverage/snapshot with a budget to existing adapters.",
+        "AC-02": "Role/event selects useful, deduplicable context; no Work is chosen and no state is changed by hook inference.",
+        "AC-03": "MISS/STALE/TIMEOUT and uncovered scope allow bounded recovery without a loop; a known path does not require rediscovery.",
+        "AC-04": "Doctor distinguishes installation, coverage, index, governance, evidence and effectiveness; a hook registration does not prove execution/delivery.",
+        "AC-05": "Usefulness is evaluated with paired tasks and the total agent cost; zero LLM/network/full scan in the synchronous handler."
+      },
+      "target_paths": {
+        "tare.tools.specgraph": [
+          "src/specgraph/cli.py",
+          "src/specgraph/capabilities.py",
+          "src/specgraph/query.py"
+        ],
+        "tare.tools.os": [
+          "relay/session_hooks.py",
+          "docs/specs/SPEC-OS-SPECGRAPH-HOOKS-001.md"
+        ],
+        "tare.tools.kernel": [
+          "src"
+        ]
+      },
+      "kind": "core",
+      "status": "planned",
+      "implementation": "SpecGraph provides services; the OS composes lifecycle/doctor and the Kernel normalizes events/policy. The detailed operational contract is SPEC-OS-SPECGRAPH-HOOKS-001 in the OS; reuse the existing handlers.",
+      "qualification_command": "python -m pytest tests/test_capabilities.py tests/test_project_queries.py -q",
+      "qualification_status": "NOT_RUN_FOR_THIS_CONTRACT",
+      "additional_refs": [
+        "tare.tools.os:docs/specs/SPEC-OS-SPECGRAPH-HOOKS-001.md",
+        "tare.tools.os:docs/decisions/ADR-OS-SPECGRAPH-001.md"
+      ]
+    },
+    {
+      "id": "C8",
+      "work_id": "SPECGRAPH-COMPLETION-C8",
+      "title": "Qualification of the complete vision and release",
+      "owner": [
+        "tare.tools.specgraph",
+        "tare.tools.os",
+        "tare.tools.kernel",
+        "tare.tools.library",
+        "tare.tools.backlog-graph"
+      ],
+      "depends_on": [
+        "C6",
+        "C7",
+        "X2"
+      ],
+      "spec_ref": "tare.tools.specgraph:docs/specs/SPEC-SPECGRAPH-C8.md",
+      "adr_refs": [
+        "tare.tools.specgraph:docs/adr/ADR-SPECGRAPH-005.md"
+      ],
+      "acceptance_criteria": {
+        "AC-01": "Each ADR-001/ADR-059/SPEC-SPECGRAPH-001 obligation points to its implementation, proof and limitation; no planned step becomes delivered.",
+        "AC-02": "Benchmark profiles pin corpus/commit/config/hardware, >=100 samples and two rounds, with misses/outliers/serialization included.",
+        "AC-03": "Context savings of >=65% are only advertised if a compatible experiment supports the claim; task success is a condition.",
+        "AC-04": "Migration, clean installation, concurrency, mutations and real hosts are qualified; isolated green tests do not qualify integration.",
+        "AC-05": "The Graphify comparison uses the same task/corpus/budget/version; without running the comparison, do not claim superiority."
+      },
+      "target_paths": {
+        "tare.tools.specgraph": [
+          "planning",
+          "docs",
+          "tests",
+          "tools/bench_queries.py"
+        ],
+        "tare.tools.os": [
+          "relay/session_hooks.py",
+          "docs/specs/SPEC-OS-SPECGRAPH-HOOKS-001.md"
+        ],
+        "tare.tools.kernel": [
+          "src"
+        ],
+        "tare.tools.library": [
+          "catalog"
+        ],
+        "tare.tools.backlog-graph": [
+          "src/graph_backlog"
+        ]
+      },
+      "kind": "core",
+      "status": "planned",
+      "implementation": "The catalog and release documents are projections of evidence. Experiments may legitimately be rejected without blocking the core; X2 is a required contract. Publication and pins are explicit steps after qualification.",
+      "qualification_command": "python -m pytest -q",
+      "qualification_status": "NOT_RUN_FOR_THIS_CONTRACT"
+    },
+    {
+      "id": "X1",
+      "work_id": "SPECGRAPH-COMPLETION-X1",
+      "title": "Context selection by usefulness and risk",
+      "owner": [
+        "tare.tools.specgraph"
+      ],
+      "depends_on": [
+        "C4"
+      ],
+      "spec_ref": "tare.tools.specgraph:docs/specs/SPEC-SPECGRAPH-X1.md",
+      "adr_refs": [
+        "tare.tools.specgraph:docs/adr/ADR-SPECGRAPH-003.md",
+        "tare.tools.specgraph:docs/adr/ADR-SPECGRAPH-011.md"
+      ],
+      "acceptance_criteria": {
+        "AC-01": "A deterministic scorer selects complete units under the budget and mandatory constraints, with auditable reasons.",
+        "AC-02": "A paired experiment compares a contract+dependencies baseline with the same budget and measures success/total cost.",
+        "AC-03": "Without a gain in two rounds, or with an additional warm cost >20ms, reject the scorer and keep the simple selector."
+      },
+      "target_paths": {
+        "tare.tools.specgraph": [
+          "tools/context_selection_experiment.py",
+          "tools/qualify_context_selection.py",
+          "tests/test_context_selection.py",
+          "tests/test_context_selection_runner.py",
+          "tools/aider_headless.py",
+          "tests/test_aider_headless.py"
+        ]
+      },
+      "kind": "experiment",
+      "status": "experiment_complete",
+      "implementation": "Exploratory hypothesis based on H-18 and Aider's selective map; the heuristic is not a statistically proven information gain.",
+      "qualification_command": "python -m pytest tests/test_context_selection.py -q",
+      "qualification_status": "LOCAL_BOUNDED_REJECTION",
+      "contract_status": "ACCEPTED",
+      "experiment_protocol": "tare.tools.specgraph:docs/specs/SPEC-SPECGRAPH-X1.md",
+      "experiment_result": "REJECT_SCORER_FOR_ADOPTION",
+      "evidence_ref": "tare.tools.specgraph:docs/evidence/2026-09-08-x1/delivery.json"
+    },
+    {
+      "id": "X2",
+      "work_id": "SPECGRAPH-COMPLETION-X2",
+      "title": "Scoped absence and answer coverage",
+      "owner": [
+        "tare.tools.specgraph"
+      ],
+      "depends_on": [
+        "C4"
+      ],
+      "spec_ref": "tare.tools.specgraph:docs/specs/SPEC-SPECGRAPH-X2.md",
+      "adr_refs": [
+        "tare.tools.specgraph:docs/adr/ADR-SPECGRAPH-003.md"
+      ],
+      "acceptance_criteria": {
+        "AC-01": "An empty answer identifies the snapshot, scope, method/constructs, exclusions, unresolved items and budget.",
+        "AC-02": "A reference outside the index or an unresolved dispatch produces UNKNOWN/PARTIAL, never a universal proof of absence.",
+        "AC-03": "Full syntactic coverage is not confused with semantic completeness; the hook checks the substitute's real coverage."
+      },
+      "target_paths": {
+        "tare.tools.specgraph": [
+          "src/specgraph/storage.py",
+          "src/specgraph/query.py",
+          "tests/test_query_coverage.py"
+        ]
+      },
+      "kind": "required_contract",
+      "status": "planned",
+      "implementation": "Required core contract with an ergonomics experiment; static relations only assert what the supported method observed.",
+      "qualification_command": "python -m pytest tests/test_query_coverage.py -q",
+      "qualification_status": "NOT_RUN_FOR_THIS_CONTRACT"
+    },
+    {
+      "id": "X3",
+      "work_id": "SPECGRAPH-COMPLETION-X3",
+      "title": "Temporal context deltas by handle",
+      "owner": [
+        "tare.tools.specgraph"
+      ],
+      "depends_on": [
+        "C4"
+      ],
+      "spec_ref": "tare.tools.specgraph:docs/specs/SPEC-SPECGRAPH-X3.md",
+      "adr_refs": [
+        "tare.tools.specgraph:docs/adr/ADR-SPECGRAPH-003.md"
+      ],
+      "acceptance_criteria": {
+        "AC-01": "The client handle binds repo/Work/snapshot/IDs/digests; the diff includes every changed and withdrawn unit.",
+        "AC-02": "Expiration, a wrong root/Work and a delta larger than the envelope return refresh/revalidation; the store's K=1 stays intact.",
+        "AC-03": "Measure bytes and the task; exploratory target of a median <=20% of the envelope after a localized edit, reject if the delta is larger in >30% of cases."
+      },
+      "target_paths": {
+        "tare.tools.specgraph": [
+          "src/specgraph/context.py",
+          "tests/test_context_delta.py"
+        ]
+      },
+      "kind": "experiment",
+      "status": "completed",
+      "implementation": "Explicitly activated X3 SDK experiment: bounded client handles and complete-unit temporal deltas, with full refresh for invalid/expired hints and non-smaller deltas. Eight frozen offline context tasks reconstruct the fresh full oracle. Median whole-response ratio 43.19% missed the exploratory 20% target; automatic adoption rejected. No model delivery-quality or invoice/cache savings claim.",
+      "qualification_command": "python -m pytest tests/test_context_delta.py -q",
+      "qualification_status": "QUALIFIED_BOUNDED_OFFLINE_EXPERIMENT",
+      "contract_status": "ACCEPTED",
+      "qualification_ref": "tare.tools.specgraph:docs/guides/CONTEXT_DELTAS.md"
+    },
+    {
+      "id": "X4",
+      "work_id": "SPECGRAPH-COMPLETION-X4",
+      "title": "Witness chain for an architectural violation",
+      "owner": [
+        "tare.tools.specgraph"
+      ],
+      "depends_on": [
+        "C5"
+      ],
+      "spec_ref": "tare.tools.specgraph:docs/specs/SPEC-SPECGRAPH-X4.md",
+      "adr_refs": [
+        "tare.tools.specgraph:docs/adr/ADR-SPECGRAPH-004.md"
+      ],
+      "acceptance_criteria": {
+        "AC-01": "A real import/layer contract returns the minimal supported violating chain, with source/range and ADR.",
+        "AC-02": "An ambiguous/inferred relation does not support a strict block; proposed cuts stay advisory and simulation is distinguished from a correct refactoring.",
+        "AC-03": "Without a real contract or measurable value, record a rejection; do not build a mandatory global repair solver."
+      },
+      "target_paths": {
+        "tare.tools.specgraph": [
+          "src/specgraph/query.py",
+          "tests/test_architecture_contracts.py"
+        ]
+      },
+      "kind": "experiment",
+      "status": "completed",
+      "implementation": "Explicit optional diagnostic over the existing bounded outgoing static path query. Actual ADR-057 Runtime import boundary and its unchanged AST oracle remain authoritative. Ten offline seeded cases: two supported chains, seven inconclusive cases and one whole-response refusal, with no unexpected definite findings. Existing enforcement is sufficient; only opt-in explanation is added. Reject a global solver, new policy engine, automatic gate or repair planner; no human-time or delivery-quality claim.",
+      "qualification_command": "python -m pytest tests/test_architecture_contracts.py -q",
+      "qualification_status": "QUALIFIED_BOUNDED_ADVISORY_DIAGNOSTIC",
+      "contract_status": "ACCEPTED",
+      "qualification_ref": "tare.tools.specgraph:docs/guides/ARCHITECTURE_WITNESS.md"
+    },
+    {
+      "id": "X5",
+      "work_id": "SPECGRAPH-COMPLETION-X5",
+      "title": "Candidate tests and proof debt",
+      "owner": [
+        "tare.tools.specgraph"
+      ],
+      "depends_on": [
+        "C5"
+      ],
+      "spec_ref": "tare.tools.specgraph:docs/specs/SPEC-SPECGRAPH-X5.md",
+      "adr_refs": [
+        "tare.tools.specgraph:docs/adr/ADR-SPECGRAPH-004.md"
+      ],
+      "acceptance_criteria": {
+        "AC-01": "Selection distinguishes a static reference from executed/attested coverage and makes blocks without proof explicit.",
+        "AC-02": "Known mutations compare the selection with the full suite; omitting a relevant test suspends selective qualification.",
+        "AC-03": "Incomplete coverage/config/env requires a fallback; a heuristic set is not a global minimum and does not waive mandatory tests.",
+        "AC-04": "Measure the capture and execution cost; exploratory target of a median <=30% of the suite time without reducing correctness."
+      },
+      "target_paths": {
+        "tare.tools.specgraph": [
+          "src/specgraph/evidence.py",
+          "tests/test_test_selection.py"
+        ]
+      },
+      "kind": "experiment",
+      "status": "planned",
+      "implementation": "Per-block dependencies inspired by Testmon; the executor owns execution and attestation. SpecGraph proposes a small experiment with reasons.",
+      "qualification_command": "python -m pytest tests/test_test_selection.py -q",
+      "qualification_status": "NOT_RUN_FOR_THIS_CONTRACT"
+    }
+  ],
+  "title": "SpecGraph: complete, fast and verifiable project intelligence"
+}

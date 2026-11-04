@@ -1,0 +1,104 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Pytest & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Local project index and recovery state
+.specgraph/
+
+# Isolated CI dependency checkout and test report
+.ci-deps/
+ci-results.xml
+
+# Local credentials and private working material (never publication inputs)
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+*.local.env
+/.aws/
+/.ssh/
+/.secrets/
+/.credentials/
+/.private/
+/.internal/
+/.reconciliation/
+credentials.local.*
+id_rsa
+id_ed25519
+*.p12
+*.pfx
+.claude/settings.local.json
+.aider*
+
+# SQLite runtime sidecars can contain the same private data as the database
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite-journal
+*.sqlite3-wal
+*.sqlite3-shm
+*.sqlite3-journal
+
+# Regenerable local tool state
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Rust build output
+rust/*/target/
+
+# Private operational records remain in local custody and pinned historical Git.
+# Keep maintained contracts, research, archive manifests and bounded test fixtures.
+/docs/archive/
+/docs/studies/
+/docs/specgraph-deterministic-audit/
+/archive/documents/
+/docs/INTERLEAVED_CONTEXT_AUDIT.md
+/docs/NATIVE_CONTEXT_PILOT.md
+/docs/SPECGRAPH_UTILITY_STUDY_2026-09-10.md
+
+# Original design-package inventory is a historical record.
+/MANIFEST.sha256
+
+# Private operational graph projection; source planning remains maintained.
+/planning/completion-program.html

@@ -1,0 +1,42 @@
+version: "1.0.0"
+governance: "ADR-001"
+last_updated: "2026-09-03"
+
+concepts:
+  - id: "SubstrateAdmissionGate"
+    name: "Substrate Admission Gate"
+    domain: "Project Traceability & Admission"
+    governing_adr: "ADR-001"
+    governing_spec: "SPEC-SPECGRAPH-001"
+    definition: "Deterministic gate that rejects dispatch or promotion when the selected source identity or acceptance criteria differ from the grounded project envelope."
+    invariants:
+      - "Admission requires an explicit link to a current specification and acceptance criteria."
+      - "Source, scope or specification hash drift fails closed."
+    relationships:
+      governs: ["ProjectGrounding", "SpecificationAdmission"]
+      requires: ["ContentAddressedIdentity"]
+
+  - id: "ContextDiet"
+    name: "Bounded Causal Context Envelope"
+    domain: "Project Retrieval & Agent Context"
+    governing_adr: "ADR-001"
+    governing_spec: "SPEC-SPECGRAPH-001"
+    definition: "Deterministic selection of the smallest bounded project neighborhood needed to explain or execute a scoped task."
+    invariants:
+      - "Context bounds are explicit and measured in bytes before transport."
+      - "Unrelated repository content is not added merely because it is lexically similar."
+    relationships:
+      mitigates: ["AttentionDegradation", "TokenBudgetExhaustion"]
+      requires: ["CausalTraceability"]
+
+  - id: "FailSafeExclusionWins"
+    name: "Fail-Safe Exclusion Precedence"
+    domain: "Path Resolution & Security"
+    governing_adr: "ADR-001"
+    governing_spec: "SPEC-SPECGRAPH-001"
+    definition: "Path-selection rule in which an excluded-path match always overrides a governed-path match."
+    invariants:
+      - "is_governed(path) equals included(path) and not excluded(path)."
+    relationships:
+      governs: ["GovernedPathResolution"]
+      mitigates: ["ScopeEscape", "GeneratedArtifactPollution"]

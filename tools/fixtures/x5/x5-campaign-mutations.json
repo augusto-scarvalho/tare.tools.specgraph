@@ -1,0 +1,20 @@
+[
+  {
+    "name": "C5-relation-gate-inverted",
+    "path": "src/specgraph/evidence.py",
+    "find": "if record[\"relation\"] != \"EXECUTED_COVERAGE\" or record[\"outcome\"] == \"NOT_EXECUTED\":",
+    "replace": "if record[\"relation\"] == \"EXECUTED_COVERAGE\" or record[\"outcome\"] == \"NOT_EXECUTED\":"
+  },
+  {
+    "name": "C5-success-outcome-inverted",
+    "path": "src/specgraph/evidence.py",
+    "find": "result[\"status\"] == \"VALID\" and record[\"outcome\"] == \"PASSED\"",
+    "replace": "result[\"status\"] == \"VALID\" and record[\"outcome\"] == \"FAILED\""
+  },
+  {
+    "name": "lexical-identifier-conjunction-inverted",
+    "path": "src/specgraph/lexical.py",
+    "find": "return (\" AND \" if identifier else \" OR \").join('\"' + t + '\"' for t in terms)",
+    "replace": "return (\" OR \" if identifier else \" AND \").join('\"' + t + '\"' for t in terms)"
+  }
+]

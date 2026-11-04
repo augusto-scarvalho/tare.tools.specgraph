@@ -1,0 +1,14 @@
+[
+  {
+    "name": "C5-relation-gate-inverted",
+    "path": "src/specgraph/evidence.py",
+    "find": "if record[\"relation\"] != \"EXECUTED_COVERAGE\" or record[\"outcome\"] == \"NOT_EXECUTED\":",
+    "replace": "if record[\"relation\"] == \"EXECUTED_COVERAGE\" or record[\"outcome\"] == \"NOT_EXECUTED\":"
+  },
+  {
+    "name": "C5-success-outcome-inverted",
+    "path": "src/specgraph/evidence.py",
+    "find": "result[\"status\"] == \"VALID\" and record[\"outcome\"] == \"PASSED\"",
+    "replace": "result[\"status\"] == \"VALID\" and record[\"outcome\"] == \"FAILED\""
+  }
+]

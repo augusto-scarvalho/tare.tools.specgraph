@@ -1,0 +1,160 @@
+name: CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      x5_campaign:
+        description: 'Explicitly run the costly X5 qualification campaign'
+        type: boolean
+        default: false
+  schedule:
+    - cron: '0 9 * * 1'
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: SpecGraph Causal Matrix & Probes (${{ matrix.platform }})
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    # Only an explicit X5 campaign request extends the normal CI timeout.
+    timeout-minutes: ${{ (github.event_name == 'workflow_dispatch' && inputs.x5_campaign) && 150 || 15 }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: windows-host
+            runner: '["self-hosted","Windows"]'
+            python: python
+            venv_python: .venv/Scripts/python.exe
+          - platform: linux-wsl2
+            runner: '["self-hosted","Linux","wsl2"]'
+            python: python3
+            venv_python: .venv/bin/python
+    runs-on: ${{ fromJSON(matrix.runner) }}
+    env:
+      GIT_CONFIG_COUNT: "1"
+      GIT_CONFIG_KEY_0: core.longpaths
+      GIT_CONFIG_VALUE_0: "true"
+      RUNTIME_REVISION: d4c5ea9c9dfc29a2d0cbd8cc2ec684a692e520f3
+      KERNEL_REVISION: ddabcb404314e90fd32929da0f170b95892ccf27
+      GIT_TERMINAL_PROMPT: '0'
+      GCM_INTERACTIVE: Never
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Fetch pinned Kernel and Runtime using Linux runner credentials
+        if: runner.os != 'Windows'
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/augusto-scarvalho/tare.tools.kernel.git .ci-deps/kernel
+          git -C .ci-deps/kernel checkout --detach "$KERNEL_REVISION"
+          git clone --filter=blob:none --no-checkout https://github.com/augusto-scarvalho/tare.tools.agent-runtime.git .ci-deps/runtime
+          git -C .ci-deps/runtime checkout --detach "$RUNTIME_REVISION"
+
+      - name: Fetch pinned Kernel and Runtime using Windows read-only deploy key
+        if: runner.os == 'Windows'
+        env:
+          GIT_SSH_COMMAND: 'C:/Windows/System32/OpenSSH/ssh.exe -F C:/ProgramData/tare-tools/ci/ssh_config'
+        run: |
+          git -c core.longpaths=true clone --filter=blob:none --no-checkout git@tare-os-ci-kernel:augusto-scarvalho/tare.tools.kernel.git .ci-deps/kernel
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git -C .ci-deps/kernel -c core.longpaths=true checkout --detach $env:KERNEL_REVISION
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git -c core.longpaths=true clone --filter=blob:none --no-checkout git@tare-os-ci-agent-runtime:augusto-scarvalho/tare.tools.agent-runtime.git .ci-deps/runtime
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git -C .ci-deps/runtime -c core.longpaths=true checkout --detach $env:RUNTIME_REVISION
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Install isolated dependencies
+        run: |
+          ${{ matrix.python }} -m venv .venv
+          ${{ matrix.venv_python }} -m pip install --upgrade pip
+          ${{ matrix.venv_python }} -m pip install -e ".[dev,multilanguage,fast]" -e .ci-deps/kernel -e .ci-deps/runtime pydantic
+
+      - name: Install Rust toolchain (Linux)
+        if: runner.os != 'Windows'
+        uses: dtolnay/rust-toolchain@stable
+
+      # The Windows runner has no C compiler and its bash is the WSL launcher. Install a
+      # portable MinGW (tree-sitter compiles C) and Rust with the GNU host (self-contained
+      # linker, no MSVC) once into the runner tool cache, verifying pinned SHA-256 hashes.
+      - name: Install Rust toolchain and C compiler (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $tools = Join-Path $env:RUNNER_TOOL_CACHE 'specgraph-native'
+          New-Item -ItemType Directory -Force $tools | Out-Null
+          function Get-Verified([string]$url, [string]$file, [string]$sha256) {
+            if ((Test-Path $file) -and (Get-FileHash $file -Algorithm SHA256).Hash -eq $sha256) { return }
+            Invoke-WebRequest $url -OutFile $file -UseBasicParsing
+            $actual = (Get-FileHash $file -Algorithm SHA256).Hash
+            if ($actual -ne $sha256) { throw "SHA-256 mismatch for ${url}: $actual" }
+          }
+          $mingw = Join-Path $tools 'mingw64\bin'
+          if (-not (Test-Path (Join-Path $mingw 'gcc.exe'))) {
+            $zip = Join-Path $tools 'winlibs.zip'
+            Get-Verified 'https://github.com/brechtsanders/winlibs_mingw/releases/download/16.2.0posix-14.0.0-ucrt-r1/winlibs-x86_64-posix-seh-gcc-16.2.0-mingw-w64ucrt-14.0.0-r1.zip' $zip 'C1F52294597C0B73786B2A78EB5D176D89226D2F21875EAB75E783A8B1CEFCC4'
+            tar -xf $zip -C $tools
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          $cargoHome = Join-Path $tools 'cargo'
+          $rustupHome = Join-Path $tools 'rustup'
+          $env:CARGO_HOME = $cargoHome
+          $env:RUSTUP_HOME = $rustupHome
+          if (-not (Test-Path (Join-Path $cargoHome 'bin\cargo.exe'))) {
+            $init = Join-Path $tools 'rustup-init.exe'
+            Get-Verified 'https://static.rust-lang.org/rustup/archive/1.29.1/x86_64-pc-windows-gnu/rustup-init.exe' $init '6D5B5709ADDC0122C916D8C810DA8D8A7B086A5D64FA805EF404D506392AADC8'
+            & $init -y --no-modify-path --profile minimal --default-host x86_64-pc-windows-gnu --default-toolchain stable
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          Add-Content $env:GITHUB_ENV "CARGO_HOME=$cargoHome"
+          Add-Content $env:GITHUB_ENV "RUSTUP_HOME=$rustupHome"
+          Add-Content $env:GITHUB_PATH (Join-Path $cargoHome 'bin')
+          Add-Content $env:GITHUB_PATH $mingw
+
+      - name: Test the native core (specgraph-core)
+        run: cargo test --release --locked --manifest-path rust/specgraph-core/Cargo.toml
+
+      - name: Build the native core (specgraph-core)
+        run: cargo build --release --locked --manifest-path rust/specgraph-core/Cargo.toml
+
+      - name: Require complete optional and owner integration
+        run: >-
+          ${{ matrix.venv_python }} -c "import tree_sitter, tree_sitter_typescript, tree_sitter_rust;
+          from compute_plane.managed_work import ObservedWorkProgress;
+          assert 'evidence_bytes' in ObservedWorkProgress.__dataclass_fields__"
+
+      - name: Check document contracts
+        run: ${{ matrix.venv_python }} tools/check_completion_contracts.py
+
+      - name: Run SpecGraph and changelog tests
+        run: ${{ matrix.venv_python }} -m pytest tests tools/tests -v --junitxml=ci-results.xml
+
+      - name: Upload test evidence
+        # Current code and bounded historical regression fixtures are tested above.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: specgraph-tests-${{ matrix.platform }}-${{ github.sha }}
+          path: ci-results.xml
+          if-no-files-found: ignore
+
+      - name: Measure X5 controls without changing release test selection
+        if: github.event_name == 'workflow_dispatch' && inputs.x5_campaign
+        run: ${{ matrix.venv_python }} tools/x5_campaign.py --output "${{ runner.temp }}/x5-${{ github.run_id }}-${{ github.run_attempt }}"
+
+      - name: Preserve X5 campaign evidence
+        if: always() && github.event_name == 'workflow_dispatch' && inputs.x5_campaign
+        uses: actions/upload-artifact@v4
+        with:
+          name: x5-${{ matrix.platform }}-${{ github.sha }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/x5-${{ github.run_id }}-${{ github.run_attempt }}
+          retention-days: 90
+          if-no-files-found: warn

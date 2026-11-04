@@ -1,0 +1,21 @@
+# Python accepts LF and CRLF without normalization; keep real whitespace errors.
+*.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+
+ontology/** -text
+
+# Preserve exact bytes for source-qualified contracts and historical receipts.
+docs/specs/** -text
+docs/adr/ADR-SPECGRAPH-*.md -text
+docs/ADR-001_SPECGRAPH_NORTH_STAR.md -text
+docs/SPEC-SPECGRAPH-001.md -text
+docs/adr/ADR-059_SPECGRAPH_CURATION_SCOPE_AND_SNAPSHOT_ISOLATION.md -text
+docs/evidence/** -text
+planning/completion-program.json -text
+planning/traceability-mappings.json -text
+
+# ADR-SPECGRAPH-009 keeps its original final blank line.
+docs/adr/ADR-SPECGRAPH-009.md whitespace=-blank-at-eof
+
+# Exact historical regression inputs keep their original byte identities.
+tests/fixtures/historical/** -text
+tools/fixtures/x5/** -text
