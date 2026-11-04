@@ -22,7 +22,7 @@ def test_source_reference_dispatches_using_selected_alias(tmp_path):
     result = tools.perform("read", {"repository": decoded["repository"], "path": decoded["path"]})
     assert result["sha256"] == decoded["sha256"]
     assert decoded["canonical_repository"] == "tare.tools.library"
-    assert result["text"] == "1: # source"
+    assert result["text"] == "1|# source"  # the kernel's read tool numbers lines as N|text
 
 
 def test_canonical_name_cannot_silently_become_a_dispatch_alias(tmp_path):
