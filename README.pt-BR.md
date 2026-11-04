@@ -95,6 +95,8 @@ cargo build --release --locked --manifest-path rust/specgraph-core/Cargo.toml
 python -m pytest tests tools/tests
 ```
 
+A CI roda em runners hospedados pelo GitHub. Para rodá-la nas suas próprias máquinas, defina as variáveis de repositório `CI_RUNNER_LINUX` e `CI_RUNNER_WINDOWS` com uma lista de labels de runner (por exemplo `["self-hosted","Linux"]`).
+
 Mudanças neste repositório acrescentam um item em `## Unreleased` no [CHANGELOG.md](CHANGELOG.md); `python tools/install_git_hooks.py` instala a verificação de pre-push ([política](docs/CHANGELOG_POLICY.md)).
 
 ## Medir
